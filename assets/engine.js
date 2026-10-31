@@ -22,9 +22,9 @@
   // canonical order top -> bottom
   var ORDER = ['F', 'C', 'R'];
   var MOD = {
-    F: { w: 9, h: 10, spr: 'fighter' },
-    C: { w: 15, h: 11, spr: 'cruiser' },
-    R: { w: 17, h: 10, spr: 'reactor' }
+    F: { w: 11, h: 12, spr: 'fighter' },
+    C: { w: 17, h: 13, spr: 'cruiser' },
+    R: { w: 19, h: 12, spr: 'reactor' }
   };
   function statsFor(stack) {
     var has = {}, i;
@@ -62,12 +62,12 @@
 
   // --------------------------------------------------------------- enemies
   var ENEMY = {
-    drone:    { w: 9,  h: 7,  hp: 1, score: 50,  spr: ['drone1', 'drone2'] },
-    moth:     { w: 13, h: 9,  hp: 1, score: 80,  spr: ['moth1', 'moth2'] },
-    dart:     { w: 7,  h: 10, hp: 1, score: 100, spr: ['dart'] },
-    spitter:  { w: 11, h: 10, hp: 2, score: 150, spr: ['spitter1', 'spitter2'] },
-    splitter: { w: 15, h: 13, hp: 3, score: 200, spr: ['splitter'] },
-    mini:     { w: 8,  h: 7,  hp: 1, score: 50,  spr: ['mini1', 'mini2'] }
+    drone:    { w: 12, h: 10, hp: 1, score: 50,  spr: ['drone1', 'drone2'], col: 'C' },
+    moth:     { w: 15, h: 11, hp: 1, score: 80,  spr: ['moth1', 'moth2'], col: 'M' },
+    dart:     { w: 9,  h: 13, hp: 1, score: 100, spr: ['dart'], col: 'Y' },
+    spitter:  { w: 14, h: 13, hp: 2, score: 150, spr: ['spitter1', 'spitter2'], col: 'V' },
+    splitter: { w: 18, h: 16, hp: 3, score: 200, spr: ['splitter'], col: 'P' },
+    mini:     { w: 8,  h: 9,  hp: 1, score: 50,  spr: ['mini1', 'mini2'], col: 'P' }
   };
 
   function bulletSpeed(stage) { return Math.min(1.2 + 0.07 * stage, 2.3); }
@@ -114,14 +114,14 @@
 
   // ----------------------------------------------------------------- boss
   var BOSS_NAMES = ['GATEKEEPER', 'GEMINI', 'OUROBOROS', 'BASTION'];
-  function makeBoss(stage) {
+  function makeBoss(stage, gameW) {
     var tier = (stage - 1) % 4;
     var mk = 1 + Math.floor((stage - 1) / 4);
     var se = Math.min(stage, 8); // HP scaling freezes at stage 8 (Kimi review)
     var name = BOSS_NAMES[tier] + (mk > 1 ? ' MK-' + roman(mk) : '');
     var b = {
       tier: tier, stage: stage, name: name, t: 0,
-      x: W / 2, y: -40, vx: 0, flash: 0, rage: false, dead: false, deathT: 0
+      x: (gameW || W) / 2, y: -40, vx: 0, flash: 0, rage: false, dead: false, deathT: 0
     };
     if (tier === 0) {        // GATEKEEPER: gate with one core
       b.w = Math.min(48 + 8 * (stage - 1), 96);
@@ -137,7 +137,7 @@
       var n = 5 + Math.min(Math.floor((stage - 3) / 2), 3);
       var segHp = 6 + 3 * (se - 3);
       b.segs = [];
-      for (var i = 0; i < n; i++) b.segs.push({ hp: segHp, maxHp: segHp, x: W / 2, y: -20 - i * 12 });
+      for (var i = 0; i < n; i++) b.segs.push({ hp: segHp, maxHp: segHp, x: (gameW || W) / 2, y: -20 - i * 12 });
       b.w = 13; b.h = 13;
       b.hp = b.maxHp = n * segHp;
       b.trail = [];
@@ -159,14 +159,15 @@
   // ------------------------------------------------------------------ game
   function createGame(opts) {
     opts = opts || {};
+    var GW = opts.width || W, GH = opts.height || H;
     var st = {
-      W: W, H: H, hudH: HUD_H,
+      W: GW, H: GH, hudH: HUD_H,
       frame: 0,
       rng: mulberry32(opts.seed || 20261031),
       phase: 'waves', phaseT: 0,
       stage: 1, score: 0, hi: opts.hi || 0, hi0: opts.hi || 0,
       lives: 3, nextExtra: 20000, newRecord: false,
-      player: { x: W / 2, y: H - 40, stack: ['F'], cool: 0, invuln: 100, alive: true, respawnT: 0 },
+      player: { x: GW / 2, y: GH - 40, stack: ['F'], cool: 0, invuln: 100, alive: true, respawnT: 0 },
       pbullets: [], ebullets: [], enemies: [], parts: [], pops: [],
       module: null, boss: null,
       plan: null, restT: 0,
@@ -181,12 +182,16 @@
   function banner(st, key, arg, dur) { st.banner = { key: key, arg: arg, t: dur || 100, dur: dur || 100 }; }
   function ev(st, type, data) { st.events.push({ type: type, data: data || null }); }
   function pop(st, x, y, text) { st.pops.push({ x: x, y: y, text: text, life: 46 }); }
-  function burst(st, x, y, n, big) {
+  function burst(st, x, y, n, big, col) {
+    col = col || 'R';
+    var dark = col.toLowerCase();
     for (var i = 0; i < n; i++) {
       var a = st.rng() * Math.PI * 2, sp = (big ? 1.6 : 0.9) + st.rng() * (big ? 2.4 : 1.6);
+      var cr = st.rng();
       st.parts.push({
         x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-        life: 20 + st.rng() * 22 | 0, c: st.rng() < 0.55 ? 'R' : (st.rng() < 0.5 ? 'W' : 'G'), sz: st.rng() < 0.3 ? 3 : 2
+        life: 20 + st.rng() * 22 | 0,
+        c: cr < 0.5 ? col : (cr < 0.78 ? 'W' : dark), sz: st.rng() < 0.3 ? 3 : 2
       });
     }
     st.parts.push({ x: x, y: y, vx: 0, vy: 0, life: 7, c: 'W', sz: big ? 22 : 12, flashP: true });
@@ -211,20 +216,20 @@
     var t = g.type, r = st.rng;
     var e = { type: t, t: 0, hp: ENEMY[t].hp, fireT: 60 + r() * 200 | 0 };
     if (t === 'drone') {
-      e.x = g.col ? 30 + (g.spawned % 2) * 10 + r() * 160 : 20 + r() * 200;
+      e.x = g.col ? st.W * 0.12 + (g.spawned % 2) * 10 + r() * st.W * 0.66 : st.W * 0.08 + r() * st.W * 0.84;
       e.y = -12; e.baseX = e.x; e.phase = r() * 6.28;
     } else if (t === 'moth') {
       var side = g.side || 1;
-      e.x = side > 0 ? -10 : W + 10; e.dir = side;
-      e.enterY = 40 + r() * 90; e.y = e.enterY; e.phase = r() * 6.28;
-      } else if (t === 'dart') {
-      e.x = 24 + r() * (W - 48); e.y = -12; e.state = 'aim'; e.aimT = 60 + r() * 30 | 0;
+      e.x = side > 0 ? -10 : st.W + 10; e.dir = side;
+      e.enterY = st.H * 0.13 + r() * st.H * 0.28; e.y = e.enterY; e.phase = r() * 6.28;
+    } else if (t === 'dart') {
+      e.x = 24 + r() * (st.W - 48); e.y = -12; e.state = 'aim'; e.aimT = 60 + r() * 30 | 0;
     } else if (t === 'spitter') {
-      e.x = 30 + r() * (W - 60); e.y = -12; e.targetY = 46 + r() * 60;
+      e.x = st.W * 0.1 + r() * st.W * 0.8; e.y = -12; e.targetY = st.H * 0.14 + r() * st.H * 0.2;
       e.volleys = st.stage === 1 ? 3 : (4 + (st.stage >= 5 ? 1 : 0)); e.cd = 80; e.phase = r() * 6.28;
       e.hp = ENEMY.spitter.hp + (st.stage >= 5 ? 1 : 0);
     } else if (t === 'splitter') {
-      e.x = 30 + r() * (W - 60); e.y = -14; e.phase = r() * 6.28;
+      e.x = st.W * 0.1 + r() * st.W * 0.8; e.y = -16; e.phase = r() * 6.28;
       e.hp = Math.min(6, ENEMY.splitter.hp + Math.floor(st.stage / 4));
     }
     st.enemies.push(e);
@@ -240,7 +245,7 @@
     var dx = 0, dy = 0;
     if (input.touch) {
       // steer toward the touch target at max speed
-      var tx = clamp(input.tx, 12, W - 12), ty = clamp(input.ty - 24, 110, H - 14);
+      var tx = clamp(input.tx, 12, st.W - 12), ty = clamp(input.ty - 24, st.H * 0.34, st.H - 14);
       var ddx = tx - p.x, ddy = ty - p.y;
       var d = Math.sqrt(ddx * ddx + ddy * ddy);
       if (d > 1) { dx = ddx / d * spd; dy = ddy / d * spd; }
@@ -250,8 +255,8 @@
       if (input.up) dy -= spd;
       if (input.down) dy += spd;
     }
-    p.x = clamp(p.x + dx, 12, W - 12);
-    p.y = clamp(p.y + dy, 110 + s.h, H - 12);
+    p.x = clamp(p.x + dx, 12, st.W - 12);
+    p.y = clamp(p.y + dy, st.H * 0.34 + s.h, st.H - 12);
     if (p.cool > 0) p.cool--;
     if (p.invuln > 0) p.invuln--;
     if ((input.fire || input.touch) && p.cool === 0) {
@@ -275,7 +280,7 @@
       if (e.type === 'drone') {
         e.y += 0.42;
         e.x = e.baseX + Math.sin(e.t * 0.04 + e.phase) * 18;
-        if (e.t > 60 && e.y < 210 && st.rng() < Math.min(0.004, 0.0012 + st.stage * 0.00035)) aimShot(st, e.x, e.y + 4, bs * 0.9);
+        if (e.t > 60 && e.y < st.H * 0.66 && st.rng() < Math.min(0.004, 0.0012 + st.stage * 0.00035)) aimShot(st, e.x, e.y + 4, bs * 0.9);
       } else if (e.type === 'moth') {
         e.x += e.dir * 0.9;
         e.y = e.enterY + Math.sin(e.x * 0.035 + e.phase) * 18;
@@ -314,7 +319,7 @@
         else e.vx = Math.max(e.vx - 0.008, -1.5);
       }
       // off screen
-      if (e.y > H + 20 || e.y < -40 || e.x < -30 || e.x > W + 30) {
+      if (e.y > st.H + 20 || e.y < -40 || e.x < -30 || e.x > st.W + 30) {
         st.enemies.splice(i, 1);
         continue;
       }
@@ -336,7 +341,7 @@
     var e = st.enemies[i], def = ENEMY[e.type];
     addScore(st, def.score);
     pop(st, e.x, e.y, '+' + def.score);
-    burst(st, e.x, e.y + def.h / 2, e.type === 'splitter' ? 14 : 8, e.type === 'splitter');
+    burst(st, e.x, e.y + def.h / 2, e.type === 'splitter' ? 14 : 8, e.type === 'splitter', def.col);
     ev(st, 'explode');
     st.shake = Math.max(st.shake, e.type === 'splitter' ? 5 : 2);
     if (e.type === 'splitter') {
@@ -411,7 +416,7 @@
     if (!kind) { nextStage(st); return; }
     st.module = {
       kind: kind,
-      x: 40 + st.rng() * (W - 80), y: -20,
+      x: st.W * 0.15 + st.rng() * st.W * 0.7, y: -20,
       baseX: 0, phase: st.rng() * 6.28, t: 0
     };
     st.module.baseX = st.module.x;
@@ -452,7 +457,7 @@
       st.restT = 60; // short pause then next stage
       return;
     }
-    if (m.y > H + 16) {
+    if (m.y > st.H + 16) {
       st.module = null;
       banner(st, 'dockMissed', null, 70);
       ev(st, 'dockfail');
@@ -519,7 +524,7 @@
         st.boss = null;
         var bonus = 1000 + 500 * st.stage;
         addScore(st, bonus);
-        pop(st, W / 2, 60, '+' + bonus);
+        pop(st, st.W / 2, st.H * 0.19, '+' + bonus);
         st.ebullets.length = 0;
         banner(st, 'clear', st.stage, 150);
         ev(st, 'stageclear');
@@ -533,8 +538,8 @@
     var cdMul = (b.hp < b.maxHp * 0.35 ? (st.stage >= 3 ? 0.75 : 0.6) : 1);
     if (b.tier === 2) {
       // serpent: head leads a slow slither, segments follow by arc length
-      var hx = W / 2 + Math.sin(b.t * 0.045 * speedMul) * 84;
-      var hy = 56 + Math.sin(b.t * 0.021) * 26;
+      var hx = st.W / 2 + Math.sin(b.t * 0.045 * speedMul) * (st.W * 0.35);
+      var hy = st.H * 0.175 + Math.sin(b.t * 0.021) * (st.H * 0.08);
       if (!b.trailD) b.trailD = 0;
       b.trailD += Math.sqrt((hx - b.x) * (hx - b.x) + (hy - b.y) * (hy - b.y));
       b.trail.unshift({ x: hx, y: hy, d: b.trailD });
@@ -559,11 +564,12 @@
       }
     } else {
       // hull bosses slide in then sway
-      if (b.y < 52) b.y += 0.6;
+      var hoverY = st.H * 0.163;
+      if (b.y < hoverY) b.y += 0.6;
       else {
-        var rx = (W - b.w) / 2 - 4;
-        b.x = W / 2 + Math.sin(b.t * (0.012 + 0.0018 * st.stage) * speedMul) * rx;
-        b.y = 52 + Math.sin(b.t * 0.021) * 5;
+        var rx = (st.W - b.w) / 2 - 4;
+        b.x = st.W / 2 + Math.sin(b.t * (0.012 + 0.0018 * st.stage) * speedMul) * rx;
+        b.y = hoverY + Math.sin(b.t * 0.021) * 5;
       }
       if (b.tier === 3 && b.turrets) {
         for (var ti = 0; ti < b.turrets.length; ti++) {
@@ -616,7 +622,7 @@
     for (i = st.pbullets.length - 1; i >= 0; i--) {
       var pb = st.pbullets[i];
       pb.x += pb.vx; pb.y += pb.vy;
-      if (pb.y < -10 || pb.x < -10 || pb.x > W + 10) { st.pbullets.splice(i, 1); continue; }
+      if (pb.y < -10 || pb.x < -10 || pb.x > st.W + 10) { st.pbullets.splice(i, 1); continue; }
       var consumed = false;
       // vs enemies
       for (j = st.enemies.length - 1; j >= 0; j--) {
@@ -678,7 +684,7 @@
       for (i = st.ebullets.length - 1; i >= 0; i--) {
         var eb = st.ebullets[i];
         eb.x += eb.vx; eb.y += eb.vy;
-        if (eb.y > H + 8 || eb.y < -8 || eb.x < -8 || eb.x > W + 8) { st.ebullets.splice(i, 1); continue; }
+        if (eb.y > st.H + 8 || eb.y < -8 || eb.x < -8 || eb.x > st.W + 8) { st.ebullets.splice(i, 1); continue; }
         if (p.invuln <= 0 &&
             Math.abs(eb.x - p.x) < s.w / 2 + 1 &&
             eb.y > p.y - s.h - 1 && eb.y < p.y + 2) {
@@ -691,7 +697,7 @@
       for (i = st.ebullets.length - 1; i >= 0; i--) {
         var eb2 = st.ebullets[i];
         eb2.x += eb2.vx; eb2.y += eb2.vy;
-        if (eb2.y > H + 8 || eb2.y < -8 || eb2.x < -8 || eb2.x > W + 8) st.ebullets.splice(i, 1);
+        if (eb2.y > st.H + 8 || eb2.y < -8 || eb2.x < -8 || eb2.x > st.W + 8) st.ebullets.splice(i, 1);
       }
     }
   }
@@ -731,7 +737,7 @@
       updateEnemies(st);
       updateBullets(st);
       if (st.phaseT > 96) {
-        p.alive = true; p.stack = ['F']; p.x = W / 2; p.y = H - 30;
+        p.alive = true; p.stack = ['F']; p.x = st.W / 2; p.y = st.H - 30;
         p.invuln = 140; p.cool = 0;
         st.ebullets.length = 0;
         st.phase = st.phaseAfterDeath || 'waves';
@@ -754,7 +760,7 @@
       updateFx(st);
       if (st.phaseT === 1) banner(st, 'warning', null, 130);
       if (st.phaseT > 130) {
-        st.boss = makeBoss(st.stage);
+        st.boss = makeBoss(st.stage, st.W);
         st.phase = 'boss'; st.phaseT = 0;
         banner(st, 'bossName', st.boss.name, 90);
       }
@@ -772,13 +778,13 @@
       updatePlayer(st, input);
       updateFx(st);
       st.clearT--;
-      if (st.clearT === 100 && st.bonusLeft > 0) { addScore(st, st.bonusLeft); pop(st, W / 2, 120, '+' + st.bonusLeft); }
+      if (st.clearT === 100 && st.bonusLeft > 0) { addScore(st, st.bonusLeft); pop(st, st.W / 2, st.H * 0.375, '+' + st.bonusLeft); }
       if (st.clearT <= 0) {
         if (firstMissingModule(p.stack)) startDocking(st);
         else {
           var fb = 500 + 100 * st.stage;
           addScore(st, fb);
-          pop(st, W / 2, 120, '+' + fb);
+          pop(st, st.W / 2, st.H * 0.375, '+' + fb);
           banner(st, 'fullShip', null, 80);
           nextStage(st);
         }

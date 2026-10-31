@@ -11,7 +11,7 @@
       "name": "Z Code",
       "kind": "agent",
       "status": "included",
-      "summary": "Designed and implemented DOCKSTAR: the modular stack mechanic and its six combinations, five enemy types, four cycling boss templates with scaling patterns, docking phases with precision bonuses, the synthesized WebAudio sound set, the trilingual interface (EN/FR/ES) with a custom 5x7 bitmap font, the manga ink-and-vermillion art direction, the Node test suite, and verification of the game played for real in a browser.",
+      "summary": "Designed and implemented DOCKSTAR: the modular stack mechanic and its six combinations, five enemy types, four cycling boss templates with scaling patterns, docking phases with precision bonuses, the synthesized WebAudio sound set, the trilingual interface (EN/FR/ES) with a custom 5x7 bitmap font, the manga ink-and-vermillion art direction, the Node test suite, and verification of the game played for real in a browser. v1.1: resolution-independent engine (240x320 portrait / 400x300 widescreen with live switching), fullscreen button with maximized fallback, and the color edition (one color family per enemy, boss palettes, moon and parallax starfield).",
       "profileUrl": "https://lob7.com/profiles/usr_ns4cywae"
     },
     {

@@ -1,5 +1,5 @@
-/* DOCKSTAR - manga paper page around a black arcade screen.
-   Family: ink black / pure white / single vermillion accent. */
+/* DOCKSTAR - manga paper page around an arcade screen (adaptive, fullscreen).
+   Family: ink black / pure white / vermillion accent + colored enemy families. */
 :root {
   --paper: #f6f1e6;
   --ink: #0a0a0a;
@@ -7,7 +7,7 @@
   --gray: #6f6f6f;
 }
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html, body { height: 100%; overflow: hidden; }
 body {
   margin: 0;
   background: var(--paper);
@@ -15,20 +15,20 @@ body {
   font-family: "Courier New", ui-monospace, Menlo, Consolas, monospace;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
   -webkit-user-select: none;
   user-select: none;
 }
 header {
   width: 100%;
-  max-width: 720px;
+  max-width: 980px;
+  margin: 0 auto;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 14px 6px;
   border-bottom: 2px solid var(--ink);
+  flex: none;
 }
 .brand {
   display: flex;
@@ -72,17 +72,25 @@ button:hover { background: var(--ink); color: var(--paper); }
 #langs button { border-right-width: 0; padding: 3px 8px; }
 #langs button:last-child { border-right-width: 2px; }
 #langs button.on { background: var(--ink); color: var(--paper); }
-#btn-sound.off { color: var(--gray); border-color: var(--gray); }
-#btn-sound.off:hover { background: var(--gray); color: var(--paper); }
+#btn-sound.off, #btn-fs.off { color: var(--gray); border-color: var(--gray); }
+#btn-sound.off:hover, #btn-fs.off:hover { background: var(--gray); color: var(--paper); }
+#btn-fs { border-color: var(--red); color: var(--red); }
+#btn-fs:hover { background: var(--red); color: var(--paper); }
 
-main { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; }
+main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
 .screen {
   position: relative;
-  width: min(94vw, calc(min(78vh, 760px) * 0.75));
-  aspect-ratio: 3 / 4;
   border: 3px solid var(--ink);
   box-shadow: 6px 6px 0 rgba(10, 10, 10, 0.85);
   background: #050505;
+  line-height: 0;
 }
 .screen::after {
   content: "";
@@ -91,27 +99,52 @@ main { flex: 1; display: flex; align-items: center; justify-content: center; wid
   width: 22px; height: 22px;
   background: var(--red);
   clip-path: polygon(100% 0, 100% 100%, 0 0);
+  pointer-events: none;
 }
 canvas#game {
   display: block;
-  width: 100%;
-  height: 100%;
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   touch-action: none;
   cursor: crosshair;
 }
 footer {
+  flex: none;
   width: 100%;
-  max-width: 720px;
+  max-width: 980px;
+  margin: 0 auto;
   padding: 6px 14px 10px;
   border-top: 2px solid var(--ink);
   font-size: 10px;
   color: var(--gray);
   letter-spacing: 0.5px;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-@media (max-height: 640px) {
+
+/* fullscreen: the game frame fills the screen, everything else vanishes */
+.screen:fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: none;
+  background: #000;
+}
+.screen:fullscreen::after { display: none; }
+.screen:-webkit-full-screen { width: 100vw !important; height: 100vh !important; border: none; box-shadow: none; background: #000; display: flex; align-items: center; justify-content: center; }
+.screen:-webkit-full-screen::after { display: none; }
+
+/* fallback "maximized" mode when fullscreen is unavailable (e.g. sandboxed iframe) */
+body.maxed header, body.maxed footer { display: none; }
+body.maxed main { padding: 0; }
+body.maxed .screen { border-width: 2px; }
+
+@media (max-width: 700px), (max-height: 640px) {
   header { padding: 6px 10px 4px; }
   .brand h1 { font-size: 16px; }
   .brand .tag { display: none; }

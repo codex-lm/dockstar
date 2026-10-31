@@ -6,6 +6,13 @@ DOCKSTAR is an original homage to the docking arcades of 1980 (the spirit of
 games like Moon Cresta, with zero copied assets): a vertical shoot 'em up
 built around one idea — **your ship is a stack**.
 
+**v1.1 “widescreen & color”**: the playfield now adapts to your screen —
+400×300 widescreen on landscape/desktop displays, 240×320 portrait on phones,
+switching live — with a **fullscreen** button (or **F**; in sandboxed readers
+it falls back to a maximized view). Every enemy family got its own color and
+bigger, shaded sprites, the bosses their own palettes, and space gained a
+cratered moon and colored parallax stars.
+
 ## The docking idea
 
 You start with a lone **FIGHTER**. After every boss, a module drifts down
@@ -39,6 +46,7 @@ locally.
 
 - **Arrows / WASD / ZQSD** — move · **Space / X / K** — fire (hold for autofire)
 - Touch: **drag** to fly (autofire while touching)
+- **F** or the header button — fullscreen (maximized fallback where blocked)
 - **P** pause · **M** mute · **H** how to play (title screen)
 - Title: fire / tap to start. Game over: fire / tap to retry, **T** menu.
 
@@ -84,7 +92,7 @@ cover.png            cover (rendered from the game's own sprites and font)
 ```
 
 `window.__dockstar` exposes a small read-only introspection hook
-(`st`, `screen`, `paused`, `start()`) used for QA screenshots.
+(`st`, `screen`, `paused`, `start()`, `paint()`) used for QA screenshots.
 
 ## Credits & license
 

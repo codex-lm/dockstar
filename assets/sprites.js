@@ -1,220 +1,261 @@
 /* DOCKSTAR - pixel sprites (pure maps, browser + Node) + canvas atlas (browser).
-   Palette (manga ink & vermillion): W white, G light gray, D dark gray,
-   R vermillion red, r dark red, K ink black. */
+   v1.1 color edition: one color family per enemy type, bigger shaded sprites.
+   Chars: W white, G light gray, D dark gray, K ink, R vermillion, r dark red,
+   C/c cyan, M/m magenta, Y/y amber, V/v green, P/p purple, O/o orange,
+   B/b steel blue. */
 (function (global) {
   'use strict';
 
-  // ---- player modules -------------------------------------------------
-  // F "STINGER" fighter (top module) 9x10
+  // ---- player modules (white hull, vermillion trim, cyan glows) ---------
   var FIGHTER = [
-    '....W....',
-    '...WWW...',
-    '...WRW...',
-    '...WRW...',
-    '..WWRWW..',
-    '..WWWWW..',
-    '.WWWWWWW.',
-    '.W.WWW.W.',
-    'WW.WWW.WW',
-    'W...W...W'
+    '.....W.....',
+    '.....C.....',
+    '....WWW....',
+    '....WRW....',
+    '....WRW....',
+    '...WWRWW...',
+    '...WWWWW...',
+    '..WWWWWWW..',
+    '.WWW.W.WWW.',
+    'WWW..W..WWW',
+    'WW...W...WW',
+    'W....W....W'
   ];
-  // C "CRUISER" mid module 15x11
   var CRUISER = [
-    '......WWW......',
-    '.....WWWWW.....',
-    '..W..WRWRW..W..',
-    '.WWW.WWWWW.WWW.',
-    '.WWWWWWWWWWWWW.',
-    'WWWWRWWWWWRWWWW',
-    'WWWWWWWWWWWWWWW',
-    'W.WWWWWWWWWWW.W',
-    'W..WWW...WWW..W',
-    '...WW.....WW...',
-    '....W.....W....'
+    '.......WWW.......',
+    '......WWWWW......',
+    '..C..WWWWWWW..C..',
+    '.WWW.WWRWRWW.WWW.',
+    'WWWWWWRRWRRWWWWWW',
+    'WWWWWWWWWWWWWWWWW',
+    'WWCWWWWWWWWWWWCWW',
+    'WWWWWWWWWWWWWWWWW',
+    'W.WWWWWWWWWWWWW.W',
+    'W...WWW...WWW...W',
+    '...WW...W...WW...',
+    '....W...W...W....',
+    '...W....W....W...'
   ];
-  // R "REACTOR" base module 17x10
   var REACTOR = [
     '.....WWWWWWWWW.....',
     '....WWWWWWWWWWW....',
-    '.W.WWWWWWWWWWWWW.W.',
-    'WWWWWRRWWWWRRWWWWW.',
-    'WWWWWRRWWWWRRWWWWW.',
-    'WW.WWWWWWWWWWWWW.WW',
-    'W...WWW.WWW.WWW...W',
-    'W...WW...WW...W...W',
-    '....W.....W.....W..',
-    '...WW.....WW.....W.'
+    '..W.WWWWWWWWWWW.W..',
+    '.WWWWRRWWWWWRRWWWW.',
+    'WWWWWRRWWWWWRRWWWWW',
+    'WWWWWWWWWWWWWWWWWWW',
+    'WW.WWWWW.WWW.WWW.WW',
+    'W...W....W....W...W',
+    '.W..W....W....W..W.',
+    '.WWWW....W....WWWW.',
+    '..W.............W..',
+    '...W.....W.....W...'
   ];
-  // engine flames (2 frames, drawn under the bottom module)
   var FLAME1 = [
-    '..R..',
-    '.RRR.',
-    '.RWR.',
-    'RWRWR',
-    '.RWR.',
-    '..R..'
+    '..O..',
+    '.OOO.',
+    '.OYO.',
+    'OYWYO',
+    '.OYO.',
+    '.OOO.',
+    '..O..'
   ];
   var FLAME2 = [
-    '.R.R.',
-    '..R..',
-    '.RWR.',
-    'RWWR.',
-    '.RRR.',
-    '..R..'
+    '.O.O.',
+    '..O..',
+    '.OYO.',
+    'OYWO.',
+    '.YYY.',
+    '.OOO.',
+    '..O..'
   ];
 
-  // ---- enemies (red army) ---------------------------------------------
+  // ---- enemies: one color family each ----------------------------------
   var DRONE1 = [
-    '...WWW...',
-    '..RRRRR..',
-    '.RRRRRRR.',
-    'RR.WWW.RR',
-    '.RRRRRRR.',
-    '..RRRRR..',
-    '...R.R...'
+    '....WWWW....',
+    '...CCCCCC...',
+    '..CCWWCCWC..',
+    '.CC.WWWW.CC.',
+    'CCCCWWWWCCCC',
+    '.CCCCCCCCCC.',
+    '..ccCCCCcc..',
+    '...cccccc...',
+    '....c..c....',
+    '............'
   ];
   var DRONE2 = [
-    '...WWW...',
-    '..RRRRR..',
-    '.RRWWWRR.',
-    'RR.WWW.RR',
-    '.RRRRRRR.',
-    '..RRRRR..',
-    '...R.R...'
+    '....WWWW....',
+    '...CCCCCC...',
+    '..CCCWWCCC..',
+    '.CC.WWCC.CC.',
+    'CCCCWWWWCCCC',
+    '.CCCWWWWCCC.',
+    '..ccCCCCcc..',
+    '...cccccc...',
+    '....c..c....',
+    '............'
   ];
   var MOTH1 = [
-    '..R.......R..',
-    '..RR.....RR..',
-    '..RRR.W.RRR..',
-    '..RRRWWRRRR..',
-    '...RRWWWRR...',
-    '....RRRRR....',
-    '.....RRR.....',
-    '....RR.RR....',
-    '...R.....R...'
-  ];
-  var MOTH2 = [
-    '.............',
-    '..RR.....RR..',
-    '...RR.W.RR...',
-    '...RRRWRRR...',
-    '..RRRWWWRRR..',
-    '.RRRRWWWRRRR.',
-    'RR..RRRRR..RR',
-    '.....RRR.....',
-    '....R...R....'
-  ];
-  var DART = [
-    '...R...',
-    '..RRR..',
-    '..RRR..',
-    '.RRWRR.',
-    '.RRWRR.',
-    '.RRRRR.',
-    'RRRRRRR',
-    '.RRRRR.',
-    '..RRR..',
-    '...R...'
-  ];
-  var SPITTER1 = [
-    '...RRRRR...',
-    '..RRRRRRR..',
-    '.RR.WWW.RR.',
-    '.RRWWWRRRR.',
-    'RRRWWWWRRRR',
-    '.RRRWWWRRR.',
-    '.RRRRRRRRR.',
-    '..RRRRRRR..',
-    '...R.R.R...',
-    '...........'
-  ];
-  var SPITTER2 = [
-    '...RRRRR...',
-    '..RRRRRRR..',
-    '.RR.WWW.RR.',
-    'RRRWWWRRRR.',
-    'RRRWWRWWRRR',
-    '.RRRWWWRRR.',
-    '.RRRRRRRRR.',
-    '..RRRRRRR..',
-    '...R.R.R...',
-    '...........'
-  ];
-  var SPLITTER = [
-    '.....RRRRR.....',
-    '...RRRRRRRRR...',
-    '..RRRRWWWRRRR..',
-    '..RRWWWWWWWRR..',
-    '.RRRWWWWWWWRRR.',
-    '.RRRWWWWWWWRRR.',
-    'RRRWWRRRRRWWRRR',
-    'RRRRWRRRRRWRRRR',
-    '.RRRRRRRRRRRRR.',
-    '..RRRRRRRRRRR..',
-    '..RR..RRR..RR..',
-    '.R....R.R....R.',
+    '..M.........M..',
+    '..MM.......MM..',
+    '..MMM..W..MMM..',
+    '..MMMMWWWMMMM..',
+    '...MMMWWWMMM...',
+    '....MMWWMMM....',
+    '.....MWWWM.....',
+    '....MM.W.MM....',
+    '...M..MMM..M...',
+    '..m...m.m...m..',
     '...............'
   ];
+  var MOTH2 = [
+    '...............',
+    '..MM.......MM..',
+    '...MM..W..MM...',
+    '...MMMWWWMMM...',
+    '..MMMMWWWMMMM..',
+    '.MMMMWWWWMMMMM.',
+    'MM...MWWWM...MM',
+    '.....M.W.M.....',
+    '....M.MMM.M....',
+    '...m..m.m..m...',
+    '...............'
+  ];
+  var DART = [
+    '....Y....',
+    '...YYY...',
+    '...YWY...',
+    '...YYY...',
+    '..YYYYY..',
+    '..YWYWY..',
+    '..YYYYY..',
+    '.YYyYyYY.',
+    '.YYYYYYY.',
+    'YYyYYYyYY',
+    '.YYYYYYY.',
+    '..YYYYY..',
+    '...y.y...'
+  ];
+  var SPITTER1 = [
+    '....VVVVVV....',
+    '..VVVVVVVVVV..',
+    '.VVV.WWWW.VVV.',
+    '.VV.WWWWWW.VV.',
+    'VVVVWWWWWWVVVV',
+    'VVVVWWKKWWVVVV',
+    'VVVVVWWWWVVVVV',
+    '.VVVVVVVVVVVV.',
+    '.VVvvVVVVvvVV.',
+    '..VvVVVVVVvV..',
+    '...V..VV..V...',
+    '....v.VV.v....',
+    '..............'
+  ];
+  var SPITTER2 = [
+    '....VVVVVV....',
+    '..VVVVVVVVVV..',
+    '.VVV.WWWW.VVV.',
+    'VVV.WWKKWW.VVV',
+    'VVVWWWKKWWWVVV',
+    'VVVVWWKKWWVVVV',
+    'VVVVVWWWWVVVVV',
+    '.VVVVVVVVVVVV.',
+    '.VVvvVVVVvvVV.',
+    '..VvVVVVVVvV..',
+    '...V..VV..V...',
+    '....v.VV.v....',
+    '..............'
+  ];
+  var SPLITTER = [
+    '......PPPPPP......',
+    '....PPPPPPPPPP....',
+    '...PPPPWWPPPPPP...',
+    '..PPPWWWWWWWWPPP..',
+    '..PPWWWWWWWWWWPP..',
+    '.PPPWWWPPPPWWWPPP.',
+    '.PPWWWPpppPWWWWPP.',
+    'PPPWWWPpppPWWWWPPP',
+    'PPPWWWPpppPWWWWPPP',
+    '.PPWWWWPPPPWWWWPP.',
+    '..PPWWWWWWWWWWPP..',
+    '..PPPPWWWWWWPPPP..',
+    '...PPPPPPPPPPPP...',
+    '....ppP.PPP.pp....',
+    '...p...PP.PP...p..',
+    '.......p..p.......'
+  ];
   var MINI1 = [
-    '..RRR..',
-    '.RWWR..',
-    'RRWWWRR',
-    '.RRRRR.',
-    '..RRR..',
-    '..R.R..',
-    '.......'
+    '..PPPP..',
+    '.PPPPPP.',
+    'PPWWWWPP',
+    'PPWWWWPP',
+    '.PPWWPP.',
+    '..PPPP..',
+    '.p.PP.p.',
+    '..p..p..',
+    '........'
   ];
   var MINI2 = [
-    '..RRR..',
-    '.RRWWR.',
-    'RRWWWRR',
-    'RRRRRRR',
-    '.RRRRR.',
-    '..R.R..',
-    '.......'
+    '..PPPP..',
+    '.PPPPPP.',
+    'PPWPPWPP',
+    'PPWWWWPP',
+    '.PPWWPP.',
+    '..PPPP..',
+    '.p.PP.p.',
+    '..p..p..',
+    '........'
   ];
 
-  // ---- serpent boss ----------------------------------------------------
+  // ---- serpent boss (orange) --------------------------------------------
   var SEGHEAD = [
-    '....RRRRR....',
-    '..RRRRRRRRR..',
-    '.RRRRWWWRRRR.',
-    '.RRWWWWWWWRR.',
-    'RRRWWWWWWWRRR',
-    'RRRWRWWWRWRRR',
-    'RRRWWWWWWWRRR',
-    '.RRRRWWWRRRR.',
-    '.RRRRRRRRRRR.',
-    '..RRRRRRRRR..',
-    '....RR.RR....',
-    '.....R.R.....',
-    '.............'
+    '.....OOOO.....',
+    '...OOOOOOOO...',
+    '..OOOWWWWOOO..',
+    '.OOWWWWWWWWOO.',
+    '.OOWWWWWWWWWO.',
+    'OOKWWWWWWWWKOO',
+    'OOWWOOOOOOWWOO',
+    'OOWWOOOOOOWWOO',
+    '.OOWWOOOOWWOO.',
+    '.OOOWWWWWWOOO.',
+    '..OOOOOOOOOO..',
+    '...OO.OO.OO...',
+    '....O.O..O....',
+    '.....o...o....',
+    '..............',
+    '..............'
   ];
   var SEG1 = [
-    '...RRRRR...',
-    '..RRRRRRR..',
-    '.RRRWWWRRR.',
-    '.RRWWWWWRR.',
-    'RRRWWWWWRRR',
-    'RRRWWWWWRRR',
-    '.RRWWWWWRR.',
-    '.RRRWWWRRR.',
-    '..RRRRRRR..',
-    '...RRRRR...',
-    '...........'
+    '....OOOO....',
+    '..OOOOOOOO..',
+    '.OOOWWWWOOO.',
+    '.OOWWWWWWOO.',
+    'OOWWWWWWWWOO',
+    'OOWWOOOOWWOO',
+    'OOWWOOOOWWOO',
+    '.OOWWWWWWOO.',
+    '.OOOWWWWOOO.',
+    '..OOOOOOOO..',
+    '...OO..OO...',
+    '..o......o..',
+    '............',
+    '............'
   ];
   var SEG2 = [
-    '...RRRRR...',
-    '..RRWWRrr..',
-    '.RRWWWRRRR.',
-    '.RRWWWrrRR.',
-    'RRRWWrrWRRR',
-    'RRRWWrrWRRR',
-    '.RRWWWrrRR.',
-    '.RRWWWRRRR.',
-    '..RRWWRrr..',
-    '...RRRRR...',
-    '...........'
+    '....OOOO....',
+    '..OOOOOOOO..',
+    '.OOOoWWWOOO.',
+    '.OOWWoWWWOO.',
+    'OOWWooWWWWOO',
+    'OOWoOOOOWWOO',
+    'OOWoWWoWWWOO',
+    '.OOWWoWWWOO.',
+    '.OOOoWOOOOO.',
+    '..OOOOOOOO..',
+    '...OO..OO...',
+    '..o......o..',
+    '............',
+    '............'
   ];
 
   // ---- boss parts -------------------------------------------------------
@@ -231,8 +272,8 @@
     '....R....',
     '....R....',
     '..DDDDD..',
-    '.DDWGWDD.',
-    '.DDWGWDD.',
+    '.DDGWGDD.',
+    '.DDGWGDD.',
     '.DDDDDDD.',
     '.DDDDDDD.',
     '..DDDDD..',
@@ -252,8 +293,15 @@
   };
 
   var COLORS = {
-    W: '#ffffff', G: '#c9c9c9', D: '#6f6f6f',
-    R: '#e0301e', r: '#8f1d12', K: '#0a0a0a'
+    W: '#ffffff', G: '#c9c9c9', D: '#6f6f6f', K: '#0a0a0a',
+    R: '#e0301e', r: '#8f1d12',
+    C: '#35e0e8', c: '#177f8c',
+    M: '#ef5bb7', m: '#8f2a6a',
+    Y: '#f7c948', y: '#a97e1c',
+    V: '#45e06e', v: '#1e8a3c',
+    P: '#a678f7', p: '#5c3aa0',
+    O: '#ff8c1a', o: '#b0560e',
+    B: '#4f9be0', b: '#2a5e94'
   };
 
   var Sprites = {
