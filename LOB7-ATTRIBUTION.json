@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "contributions": [
+    {
+      "name": "Cédric Bernadac",
+      "kind": "person",
+      "status": "included",
+      "summary": "Runs the Z Code game workshop and directed this production: he asked for a 1980s shoot 'em up inspired by Moon Cresta, with dockable ship modules, growing bosses and lively sound effects."
+    },
+    {
+      "name": "Z Code",
+      "kind": "agent",
+      "status": "included",
+      "summary": "Designed and implemented DOCKSTAR: the modular stack mechanic and its six combinations, five enemy types, four cycling boss templates with scaling patterns, docking phases with precision bonuses, the synthesized WebAudio sound set, the trilingual interface (EN/FR/ES) with a custom 5x7 bitmap font, the manga ink-and-vermillion art direction, the Node test suite, and verification of the game played for real in a browser.",
+      "profileUrl": "https://lob7.com/profiles/usr_ns4cywae"
+    },
+    {
+      "name": "Kimi K3.1 Pro",
+      "kind": "agent",
+      "status": "included",
+      "summary": "Reviewed the balance spreadsheet of the real playtests; its tuning suggestions (longer dart telegraph, 3 volleys for stage-1 spitters, drone fire-probability cap, boss HP frozen at stage 8, softened rage) were applied by Z Code."
+    }
+  ],
+  "basedOnReleaseIds": []
+}

@@ -1,0 +1,117 @@
+/* DOCKSTAR - interface strings EN (default) / FR / ES. */
+(function (global) {
+  'use strict';
+  var I18N = {
+    en: {
+      tagline: 'STACK YOUR SHIP. BREAK THE SWARM.',
+      pressStart: 'PRESS FIRE / TAP TO START',
+      howtoBtn: 'H: HOW TO PLAY',
+      controlsHint: 'ARROWS OR WASD: MOVE   SPACE: FIRE',
+      touchHint: 'DRAG: MOVE   AUTOFIRE ON TOUCH',
+      stage: 'STAGE',
+      stageClear: 'STAGE CLEAR!',
+      stageBonus: 'BONUS',
+      warning: 'WARNING!',
+      dockThe: 'DOCK THE',
+      docked: 'DOCKED!',
+      perfectDock: 'PERFECT DOCK!',
+      dockMissed: 'MISSED...',
+      fullShip: 'FULL SHIP BONUS!',
+      moduleLost: 'MODULE LOST!',
+      ready: 'READY',
+      gameOver: 'GAME OVER',
+      newRecord: 'NEW RECORD!',
+      playAgain: 'FIRE: RETRY   T: MENU',
+      pause: 'PAUSE',
+      resume: 'PRESS P TO RESUME',
+      howtoTitle: 'HOW TO PLAY',
+      howto1: 'YOUR SHIP IS A STACK OF MODULES.',
+      howto2: 'FIGHTER: FAST, SINGLE SHOT.',
+      howto3: 'CRUISER: TWIN CANNONS.',
+      howto4: 'REACTOR: WIDE, SPREAD FIRE.',
+      howto5: 'A HIT DESTROYS THE TOP MODULE.',
+      howto6: 'FLY WHAT IS LEFT!',
+      howto7: 'AFTER EACH BOSS, CATCH THE NEXT',
+      howto8: 'MODULE: ALIGN CENTER TO DOCK IT.',
+      howto9: 'PERFECT ALIGNMENT: BIG BONUS.',
+      footer: "A 1980s docking shooter homage. Original game, no arcade assets."
+    },
+    fr: {
+      tagline: "EMPILEZ VOTRE VAISSEAU. BRISEZ L'ESSAIM.",
+      pressStart: 'TIR / TOUCHEZ POUR JOUER',
+      howtoBtn: 'H: COMMENT JOUER',
+      controlsHint: 'FLÈCHES OU ZQSD: BOUGER   ESPACE: TIR',
+      touchHint: 'GLISSER: BOUGER   TIR AUTO AU TOUCHER',
+      stage: 'NIVEAU',
+      stageClear: 'NIVEAU TERMINÉ !',
+      stageBonus: 'BONUS',
+      warning: 'ALERTE !',
+      dockThe: 'AMARREZ LE',
+      docked: 'AMARRÉ !',
+      perfectDock: 'AMARRAGE PARFAIT !',
+      dockMissed: 'MANQUÉ...',
+      fullShip: 'VAISSEAU COMPLET !',
+      moduleLost: 'MODULE PERDU !',
+      ready: 'PRÊT',
+      gameOver: 'GAME OVER',
+      newRecord: 'NOUVEAU RECORD !',
+      playAgain: 'TIR: REJOUER   T: MENU',
+      pause: 'PAUSE',
+      resume: 'P POUR REPRENDRE',
+      howtoTitle: 'COMMENT JOUER',
+      howto1: 'VOTRE VAISSEAU EST UNE PILE DE MODULES.',
+      howto2: 'CHASSEUR: RAPIDE, TIR SIMPLE.',
+      howto3: 'CROISEUR: DOUBLE CANON.',
+      howto4: 'RÉACTEUR: LARGE, TIR ÉCLATÉ.',
+      howto5: 'UN CHOC DÉTRUIT LE MODULE DU HAUT.',
+      howto6: 'VOLEZ AVEC CE QUI RESTE !',
+      howto7: 'APRÈS CHAQUE BOSS, ATTRAPEZ LE',
+      howto8: 'MODULE SUIVANT: ALIGNEZ LE CENTRE.',
+      howto9: 'ALIGNEMENT PARFAIT: GROS BONUS.',
+      footer: "Hommage aux shoot'em up à amarrage des années 80. Jeu original, aucun asset d'arcade."
+    },
+    es: {
+      tagline: 'ENCAJA TU NAVE. ROMPE EL ENJAMBRE.',
+      pressStart: 'FUEGO / TOCA PARA JUGAR',
+      howtoBtn: 'H: CÓMO JUGAR',
+      controlsHint: 'FLECHAS O WASD: MOVER   ESPACIO: FUEGO',
+      touchHint: 'ARRASTRA: MOVER   FUEGO AUTO AL TOCAR',
+      stage: 'NIVEL',
+      stageClear: '¡NIVEL SUPERADO!',
+      stageBonus: 'BONUS',
+      warning: '¡ALERTA!',
+      dockThe: 'ACOPLA EL',
+      docked: '¡ACOPLADO!',
+      perfectDock: '¡ACOPLAMIENTO PERFECTO!',
+      dockMissed: 'FALLADO...',
+      fullShip: '¡NAVE COMPLETA!',
+      moduleLost: '¡MÓDULO PERDIDO!',
+      ready: 'LISTO',
+      gameOver: 'GAME OVER',
+      newRecord: '¡NUEVO RECORD!',
+      playAgain: 'FUEGO: OTRA VEZ   T: MENU',
+      pause: 'PAUSA',
+      resume: 'P PARA SEGUIR',
+      howtoTitle: 'CÓMO JUGAR',
+      howto1: 'TU NAVE ES UNA PILA DE MÓDULOS.',
+      howto2: 'CAZA: RÁPIDO, DISPARO SIMPLE.',
+      howto3: 'CRUCERO: DOBLE CAÑÓN.',
+      howto4: 'REACTOR: ANCHO, DISPARO TRIPLE.',
+      howto5: 'UN GOLPE DESTRUYE EL MÓDULO SUPERIOR.',
+      howto6: '¡VUELA CON LO QUE QUEDA!',
+      howto7: 'TRAS CADA BOSS, ATRAPA EL SIGUIENTE',
+      howto8: 'MÓDULO: CENTRA BIEN PARA ACOPLAR.',
+      howto9: 'CENTRADO PERFECTO: GRAN BONUS.',
+      footer: 'Homenaje a los shooters de acoplamiento de los 80. Juego original.'
+    }
+  };
+  // module display names (proper nouns, shared)
+  I18N.moduleNames = { F: 'FIGHTER', C: 'CRUISER', R: 'REACTOR' };
+  I18N.langs = ['en', 'fr', 'es'];
+  I18N.get = function (lang, key) {
+    var d = I18N[lang] || I18N.en;
+    return Object.prototype.hasOwnProperty.call(d, key) ? d[key] : I18N.en[key];
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = I18N;
+  else global.DOCKSTAR_I18N = I18N;
+})(typeof window !== 'undefined' ? window : globalThis);

@@ -1,0 +1,25 @@
+{
+  "title": "DOCKSTAR",
+  "description": "A 1980s docking shooter. Your ship is a stack: start with a lone fighter, catch the modules drifting down after each boss to dock the cruiser and the reactor, and fly whatever survives - every combination flies and fires differently, and a hit only tears off the top module. Waves of five enemy types end in a boss that keeps growing (GATEKEEPER, GEMINI, the serpent OUROBOROS, the BASTION fortress), for as long as your stack holds. Perfect docking pays big bonuses. An original homage to the docking arcades of 1980, no arcade assets, every sound synthesized live. Keyboard or touch, in English, French and Spanish.",
+  "entrypoint": "index.html",
+  "license": "MIT",
+  "controls": [
+    "Arrows, WASD or ZQSD to move - Space, X or K to fire (hold for autofire). On touch screens, drag to fly with autofire while touching.",
+    "After each boss, catch the drifting module: align your ship's center with its beacon to dock it. Perfect alignment pays 1000 points.",
+    "P pause, M mute, H how to play. Fire or tap to start and to retry."
+  ],
+  "genre": [
+    "Arcade",
+    "Shoot 'em up"
+  ],
+  "themes": [
+    "Space",
+    "Docking",
+    "Retro",
+    "Bosses"
+  ],
+  "credits": [
+    "A game by Cédric Bernadac, created with AI agents (Z Code & Kimi K3.1 Pro)."
+  ],
+  "cover": "cover.png"
+}

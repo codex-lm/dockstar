@@ -1,0 +1,119 @@
+/* DOCKSTAR - manga paper page around a black arcade screen.
+   Family: ink black / pure white / single vermillion accent. */
+:root {
+  --paper: #f6f1e6;
+  --ink: #0a0a0a;
+  --red: #e0301e;
+  --gray: #6f6f6f;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Courier New", ui-monospace, Menlo, Consolas, monospace;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  -webkit-user-select: none;
+  user-select: none;
+}
+header {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px 6px;
+  border-bottom: 2px solid var(--ink);
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.brand .mark {
+  display: inline-block;
+  width: 10px; height: 10px;
+  background: var(--red);
+  transform: translateY(1px);
+}
+.brand h1 {
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 3px;
+  font-weight: 900;
+}
+.brand .tag {
+  font-size: 10px;
+  color: var(--gray);
+  letter-spacing: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topctl { display: flex; gap: 6px; align-items: center; flex: none; }
+#langs { display: flex; }
+button {
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 1px;
+  background: transparent;
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  padding: 3px 7px;
+  cursor: pointer;
+}
+button:hover { background: var(--ink); color: var(--paper); }
+#langs button { border-right-width: 0; padding: 3px 8px; }
+#langs button:last-child { border-right-width: 2px; }
+#langs button.on { background: var(--ink); color: var(--paper); }
+#btn-sound.off { color: var(--gray); border-color: var(--gray); }
+#btn-sound.off:hover { background: var(--gray); color: var(--paper); }
+
+main { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; }
+.screen {
+  position: relative;
+  width: min(94vw, calc(min(78vh, 760px) * 0.75));
+  aspect-ratio: 3 / 4;
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 rgba(10, 10, 10, 0.85);
+  background: #050505;
+}
+.screen::after {
+  content: "";
+  position: absolute;
+  top: -3px; right: -3px;
+  width: 22px; height: 22px;
+  background: var(--red);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+canvas#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  touch-action: none;
+  cursor: crosshair;
+}
+footer {
+  width: 100%;
+  max-width: 720px;
+  padding: 6px 14px 10px;
+  border-top: 2px solid var(--ink);
+  font-size: 10px;
+  color: var(--gray);
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+@media (max-height: 640px) {
+  header { padding: 6px 10px 4px; }
+  .brand h1 { font-size: 16px; }
+  .brand .tag { display: none; }
+  footer { padding: 4px 10px 6px; }
+}

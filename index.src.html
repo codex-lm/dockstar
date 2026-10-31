@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DOCKSTAR</title>
+  <meta name="description" content="DOCKSTAR — a 1980s docking shooter. Stack your ship from fighter, cruiser and reactor modules, fly whatever survives, and break the swarm.">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="mark"></span>
+      <h1>DOCKSTAR</h1>
+      <span class="tag" id="tagline"></span>
+    </div>
+    <div class="topctl">
+      <div id="langs" role="group" aria-label="Language">
+        <button data-lang="en" type="button">EN</button><button data-lang="fr" type="button">FR</button><button data-lang="es" type="button">ES</button>
+      </div>
+      <button id="btn-sound" type="button">SOUND ON</button>
+    </div>
+  </header>
+  <main>
+    <div class="screen">
+      <canvas id="game" width="240" height="320" aria-label="DOCKSTAR game screen"></canvas>
+    </div>
+  </main>
+  <footer><span id="foot"></span></footer>
+  <script src="assets/font.js"></script>
+  <script src="assets/sprites.js"></script>
+  <script src="assets/audio.js"></script>
+  <script src="assets/i18n.js"></script>
+  <script src="assets/engine.js"></script>
+  <script src="assets/game.js"></script>
+</body>
+</html>
